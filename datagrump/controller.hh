@@ -2,6 +2,7 @@
 #define CONTROLLER_HH
 
 #include <cstdint>
+#include <map>
 
 /* Congestion controller interface */
 
@@ -11,6 +12,9 @@ private:
   bool debug_; /* Enables debugging output */
 
   /* Add member variables here */
+  double window_size_;
+  std::map<uint64_t, uint64_t> pending_; // map from sequence number to send timestamp
+  uint64_t rtt_estimate_;
 
 public:
   /* Public interface for the congestion controller */
