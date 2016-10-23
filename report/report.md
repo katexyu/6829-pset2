@@ -20,6 +20,14 @@ Here is the data we collected
 | 90     | 5.01                | 975                      | 5.14  |
 | 100    | 5.02                | 1054                     | 4.76  |
 
+![](a.png)\
+
+
+## Best window size
+
+We found that the best window size (among our data points) is 10 (for a score
+of 12.83).
+
 ## Reproducability
 
 We found the results to be very reproducible. We ran the simulation in a
