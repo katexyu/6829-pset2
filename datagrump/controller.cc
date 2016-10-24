@@ -4,10 +4,12 @@
 #include "controller.hh"
 #include "timestamp.hh"
 
-#define AI_FACTOR (1.0)
-#define MD_FACTOR (2.0)
+#define ADDITIVE_FACTOR (1.0)
+#define MULTIPLICATIVE_FACTOR (2.0)
 #define RTT_EWMA_FACTOR (0.2)
-#define LATE_FACTOR (1.2)
+#define DELAY_THRESHOLD_MIN (80)
+#define DELAY_THRESHOLD_MAX (120)
+
 
 using namespace std;
 
@@ -15,28 +17,12 @@ using namespace std;
 Controller::Controller( const bool debug )
   : debug_ { debug },
     window_size_ { 1 },
-    pending_ { },
     rtt_estimate_ { 0 }
 {}
 
 /* Get current window size, in datagrams */
 unsigned int Controller::window_size( void )
 {
-  // do multiplicative decrease
-  std::set<uint64_t> to_remove;
-  auto now = timestamp_ms();
-  for (auto const &p : this->pending_) {
-    auto seq = p.first;
-    auto ts = p.second;
-    if (this->rtt_estimate_ != 0 && now - ts > this->rtt_estimate_ * LATE_FACTOR) {
-      to_remove.insert(seq);
-      this->window_size_ /= MD_FACTOR;
-    }
-  }
-  for (auto const &s : to_remove) {
-    this->pending_.erase(s);
-  }
-
   // ensure window size is at least 1
   if (this->window_size_ < 1) {
     this->window_size_ = 1;
@@ -58,8 +44,6 @@ void Controller::datagram_was_sent( const uint64_t sequence_number,
 				    const uint64_t send_timestamp )
                                     /* in milliseconds */
 {
-  this->pending_[sequence_number] = send_timestamp;
-
   if ( debug_ ) {
     cerr << "At time " << send_timestamp
 	 << " sent datagram " << sequence_number << endl;
@@ -76,19 +60,22 @@ void Controller::ack_received( const uint64_t sequence_number_acked,
 			       const uint64_t timestamp_ack_received )
                                /* when the ack was received (by sender) */
 {
-  // additive increase
-  // increase by 1/cwnd for each ack
-  this->window_size_ += AI_FACTOR / (this->window_size_);
-
-  // remove from pending
-  this->pending_.erase(sequence_number_acked);
-
   // update rtt estimate
   auto rtt = timestamp_ack_received - send_timestamp_acked;
   if (this->rtt_estimate_ == 0) {
     this->rtt_estimate_ = rtt;
   } else {
     this->rtt_estimate_ = RTT_EWMA_FACTOR * rtt + (1 - RTT_EWMA_FACTOR) * this->rtt_estimate_;
+  }
+
+  if (rtt < DELAY_THRESHOLD_MIN) {
+    // Additive increase
+    this->window_size_ += ADDITIVE_FACTOR / this->window_size_;
+    // this->window_size_ *= MULTIPLICATIVE_FACTOR;
+  } else if (rtt > DELAY_THRESHOLD_MAX) {
+    // Multiplicative decrease
+    this->window_size_ /= MULTIPLICATIVE_FACTOR;
+    // this->window_size_ -= ADDITIVE_FACTOR / this->window_size_;
   }
 
   if ( debug_ ) {

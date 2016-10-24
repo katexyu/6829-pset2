@@ -73,6 +73,36 @@ the target metric. However, AIMD can do pretty well at maximizing throughput
 
 # Exercise C
 
+We implemented a delay triggered scheme with a target delay centered around 100ms,
+with a 20ms tolerance in either direction. In terms of window size adjustment, we
+experimented with different schemes and parameters, as shown in the following table:
+
+A corresponds to the additive factor, and B corresponds to the multiplicative factor.
+
+| Scheme | A | B | Throughput (Mbit/s) | 95-percentile delay (ms) | Score |
+| ------ | - | - | ------------------- | ------------------------ | ----- |
+| AIMD   | 1 | 2 | 3.04                | 134                      | 22.69 |
+| AIAD   | 1 |   | 4.77                | 466                      | 10.24 |
+| MIAD   | 1 | 2 | 4.94                | 18041                    | 0.27  |
+| MIMD   |   | 2 | 4.71                | 7873                     | 0.59  |
+
+Our AIMD-esque implementation performed well, resulting in a score of 22.69.
+We decided to further experiment with the AIMD scheme by tuning the parameters.
+
+| Lower (ms) | Upper (ms) | A | B | Throughput (Mbit/s) | 95-percentile delay (ms) | Score |
+| ---------- | ---------- | - | - | ------------------- | ------------------------ | ----- |
+| 80         | 120        | 1 | 2 | 3.04                | 134                      | 22.69 |
+| 60         | 100        | 1 | 2 | 2.66                | 128                      | 20.78 |
+| 100        | 140        | 1 | 2 | 3.46                | 158                      | 21.90 |
+| 90         | 110        | 1 | 2 | 2.92                | 134                      | 21.79 |
+| 70         | 110        | 1 | 2 | 2.91                | 134                      | 21.72 |
+| 70         | 130        | 1 | 2 | 3.17                | 145                      | 21.86 |
+| 80         | 120        | 1 | 3 | 3.00                | 138                      | 21.74 |
+| 80         | 120        | 2 | 2 | 3.53                | 157                      | 22.48 |
+
+The best result was still achieved by the AIMD implementation centered around 100ms with a
+20ms tolerance, a additive factor of 1, and a multiplicative factor of 2.
+
 # Exercise D
 
 # Exercise E
