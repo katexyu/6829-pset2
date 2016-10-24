@@ -5,10 +5,10 @@
 #include "timestamp.hh"
 
 #define RTT_EWMA_FACTOR (0.2)
-#define TARGET_DELAY (100) // milliseconds
-#define K_P (1.0)
-#define K_I (0.0)
-#define K_D (0.0)
+#define TARGET_DELAY (90.0) // milliseconds
+#define K_P (1e-1)
+#define K_I (1e-2)
+#define K_D (2e-3)
 
 using namespace std;
 
@@ -75,7 +75,18 @@ void Controller::ack_received( const uint64_t sequence_number_acked,
   this->previous_error_ = error;
 
   double output = K_P * error + K_I * this->integral_error_ + K_D * derivative_error;
+  if (output < 0 && error < 0) {
+    this->integral_error_ -= error; // subtract it back out
+    // prevent "reset windup"
+  }
   this->window_size_ = output;
+
+  if ( debug_ ) {
+    cerr << "Target: " << TARGET_DELAY << " rtt: " << rtt << endl;
+    cerr << "At time " << timestamp_ack_received
+      << " received ack for datagram " << sequence_number_acked << endl;
+    cerr << "  error = " << error << " window size set to: " << output << endl;
+  }
 
   if ( debug_ ) {
     cerr << "At time " << timestamp_ack_received

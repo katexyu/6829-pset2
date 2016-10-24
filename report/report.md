@@ -105,7 +105,12 @@ The best result was still achieved by the AIMD implementation centered around 10
 
 # Exercise D
 
-Tried modifying our AIMD delay-triggered scheme to use the EWMA with a threshold of 20ms instead
-of hardcoded values, and this resulted in terrible performance (0.25 Mbit/s throughput) and 105ms delay.
+## PID
+
+We implemented a PID controller to control window size.
+
+### References
+
+* http://www.controleng.com/single-article/fixing-pid/3975cad3f121d8df3fc0fd67660822b1.html
 
 # Exercise E
