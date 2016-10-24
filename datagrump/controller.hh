@@ -14,6 +14,8 @@ private:
   /* Add member variables here */
   double window_size_;
   uint64_t rtt_estimate_;
+  double integral_error_;
+  double previous_error_;
 
 public:
   /* Public interface for the congestion controller */

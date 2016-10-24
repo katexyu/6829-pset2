@@ -4,12 +4,11 @@
 #include "controller.hh"
 #include "timestamp.hh"
 
-#define ADDITIVE_FACTOR (1.0)
-#define MULTIPLICATIVE_FACTOR (2.0)
 #define RTT_EWMA_FACTOR (0.2)
-#define DELAY_THRESHOLD_MIN (80)
-#define DELAY_THRESHOLD_MAX (120)
-#define DELAY_TOLERANCE (20)
+#define TARGET_DELAY (100) // milliseconds
+#define K_P (1.0)
+#define K_I (0.0)
+#define K_D (0.0)
 
 using namespace std;
 
@@ -17,7 +16,9 @@ using namespace std;
 Controller::Controller( const bool debug )
   : debug_ { debug },
     window_size_ { 1 },
-    rtt_estimate_ { 0 }
+    rtt_estimate_ { 0 },
+    integral_error_ { 0 },
+    previous_error_ { 0 }
 {}
 
 /* Get current window size, in datagrams */
@@ -68,15 +69,13 @@ void Controller::ack_received( const uint64_t sequence_number_acked,
     this->rtt_estimate_ = RTT_EWMA_FACTOR * rtt + (1 - RTT_EWMA_FACTOR) * this->rtt_estimate_;
   }
 
-  if (rtt < this->rtt_estimate_ - DELAY_TOLERANCE) {
-    // Additive increase
-    this->window_size_ += ADDITIVE_FACTOR / this->window_size_;
-    // this->window_size_ *= MULTIPLICATIVE_FACTOR;
-  } else if (rtt > this->rtt_estimate_ + DELAY_TOLERANCE) {
-    // Multiplicative decrease
-    this->window_size_ /= MULTIPLICATIVE_FACTOR;
-    // this->window_size_ -= ADDITIVE_FACTOR / this->window_size_;
-  }
+  double error = TARGET_DELAY - rtt;
+  this->integral_error_ += error;
+  double derivative_error = error - this->previous_error_;
+  this->previous_error_ = error;
+
+  double output = K_P * error + K_I * this->integral_error_ + K_D * derivative_error;
+  this->window_size_ = output;
 
   if ( debug_ ) {
     cerr << "At time " << timestamp_ack_received
