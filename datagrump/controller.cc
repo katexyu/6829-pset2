@@ -9,7 +9,7 @@
 #define RTT_EWMA_FACTOR (0.2)
 #define DELAY_THRESHOLD_MIN (80)
 #define DELAY_THRESHOLD_MAX (120)
-
+#define DELAY_TOLERANCE (20)
 
 using namespace std;
 
@@ -68,11 +68,11 @@ void Controller::ack_received( const uint64_t sequence_number_acked,
     this->rtt_estimate_ = RTT_EWMA_FACTOR * rtt + (1 - RTT_EWMA_FACTOR) * this->rtt_estimate_;
   }
 
-  if (rtt < DELAY_THRESHOLD_MIN) {
+  if (rtt < this->rtt_estimate_ - DELAY_TOLERANCE) {
     // Additive increase
     this->window_size_ += ADDITIVE_FACTOR / this->window_size_;
     // this->window_size_ *= MULTIPLICATIVE_FACTOR;
-  } else if (rtt > DELAY_THRESHOLD_MAX) {
+  } else if (rtt > this->rtt_estimate_ + DELAY_TOLERANCE) {
     // Multiplicative decrease
     this->window_size_ /= MULTIPLICATIVE_FACTOR;
     // this->window_size_ -= ADDITIVE_FACTOR / this->window_size_;
