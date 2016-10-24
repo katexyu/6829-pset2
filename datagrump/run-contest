@@ -54,6 +54,8 @@ system q{mm-throughput-graph 500 /tmp/contest_uplink_log > /dev/null}
 
 print "\n";
 
+exit 0;
+
 # gzip logfile
 print q{Uploading data to server...};
 
