@@ -107,7 +107,21 @@ The best result was still achieved by the AIMD implementation centered around 10
 
 ## PID
 
-We implemented a PID controller to control window size.
+We implemented a PID controller to control window size. We also added some code
+to prevent "reset windup", which is a condition that results in a large
+accumulated negative error. This is an issue with the system because window
+size can't be "driven" to a negative value.
+
+We didn't really know a particularly principled way of setting PID parameters,
+so we manually tuned parameters. To avoid "overfitting" the PID parameters, we
+trained on the TMobile dataset and tested on the Verizon dataset. Here is the
+data from testing on the TMobile dataset:
+
+| Target (ms) | EWMA | K_P  | K_I  | K_D  | Throughput (Mbit/s) | 95-percentile delay (ms) | Score |
+| ----------- | ---- | ---- | ---- | ---- | ------------------- | ------------------------ | ----- |
+| 90          | 0.2  | 1e-1 | 1e-2 | 2e-3 | 14.27               | 268                      | 53.25 |
+| 90          | 0.4  | 1e-1 | 1e-2 | 2e-3 | 14.29               | 268                      | 53.32 |
+| 90          | 0.2  | 1e-1 | 2e-2 | 2e-3 | 12.66               | 302                      | 41.92 |
 
 ### References
 

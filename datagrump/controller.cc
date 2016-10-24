@@ -3,12 +3,7 @@
 
 #include "controller.hh"
 #include "timestamp.hh"
-
-#define RTT_EWMA_FACTOR (0.2)
-#define TARGET_DELAY (90.0) // milliseconds
-#define K_P (1e-1)
-#define K_I (1e-2)
-#define K_D (2e-3)
+#include "parameters.hh"
 
 using namespace std;
 
