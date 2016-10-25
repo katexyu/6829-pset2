@@ -155,6 +155,11 @@ Taking the best parameters and running the simulation on the Verizon trace, we
 get a throughput of 4.33 Mbits/s and a 95th percentile signal delay of 186
 milliseconds for a score of 23.28.
 
+If we do the grid search on the Verizon trace directly, we find the parameters
+EWMA = 0.2, Target = 90, K_I = 5e-3, K_D = 1e-2, and K_P = 1e-2 for a
+throughput of 4.59 Mbits/s, 95th percentile signal delay of 182 ms, and a score
+of 25.22.
+
 ### References
 
 * http://www.controleng.com/single-article/fixing-pid/3975cad3f121d8df3fc0fd67660822b1.html
