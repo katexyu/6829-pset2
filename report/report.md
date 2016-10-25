@@ -165,3 +165,8 @@ of 25.59.
 * http://www.controleng.com/single-article/fixing-pid/3975cad3f121d8df3fc0fd67660822b1.html
 
 # Exercise E
+
+# Contributions
+
+We pair programmed exercises A, B, and C. We came up with the idea for the PID
+controller together. Anish wrote the grid search.
