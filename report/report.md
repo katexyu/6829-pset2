@@ -205,7 +205,19 @@ We tried augmenting our PD controller with our multiplicative decrease implement
 Part B. With no tuning, using a timeout of 1000ms and a MD factor of 2.0, the performance was
 pretty bad (1.09 Mbits/s throughput and 112 ms 95th percentile signal delay on the Verizon
 trace).
- 
+
+We then ran a gridsearch over MD factors and non-1 MD_FACTORS performed strictly worse than when no
+multiplicative decrease was applied. From our results, it seemed like the multiplicative decrease
+factor caused our controller to become far too conservative. These are some of the best results from
+the gridsearch:
+
+| K_P  | K_D  | Target Delay | M_D Factor | Throughput | Delay | Score |
+|------|----- | ------------ | ---------- | ---------- | ----- | ----- |
+| 1e-2 | 1e-2 | 80.0         | 1.1        | 1.72       | 52    | 33.08 |
+| 1e-2 | 1e-2 | 70.0         | 1.0        | 10.92      | 197   | 55.43 |
+| 1e-2 | 1e-2 | 80.0         | 1.0        | 12.35      | 218   | 56.65 |
+| 1e-2 | 1e-2 | 80.0         | 1.0        | 12.37      | 218   | 56.74 |
+
 # Exercise E
 
 # Contributions
