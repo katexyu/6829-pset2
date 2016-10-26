@@ -199,6 +199,13 @@ This didn't actually make much of a difference.
 
 We tried using a PD controller to control changes to the window size.
 
+## PD Controller with Multiplicative Decrease
+
+We tried augmenting our PD controller with our multiplicative decrease implementation from
+Part B. With no tuning, using a timeout of 1000ms and a MD factor of 2.0, the performance was
+pretty bad (1.09 Mbits/s throughput and 112 ms 95th percentile signal delay on the Verizon
+trace).
+ 
 # Exercise E
 
 # Contributions

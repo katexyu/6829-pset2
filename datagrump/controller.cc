@@ -13,12 +13,28 @@ Controller::Controller( const bool debug )
     window_size_ { 1 },
     rtt_estimate_ { 0 },
     integral_error_ { 0 },
-    previous_error_ { 0 }
+    previous_error_ { 0 },
+    pending_ { }
 {}
 
 /* Get current window size, in datagrams */
 unsigned int Controller::window_size( void )
 {
+  // do multiplicative decrease
+  std::set<uint64_t> to_remove;
+  auto now = timestamp_ms();
+  for (auto const &p : this->pending_) {
+    auto seq = p.first;
+    auto ts = p.second;
+    if (this->rtt_estimate_ != 0 && now - ts > this->rtt_estimate_ * LATE_FACTOR) {
+      to_remove.insert(seq);
+      this->window_size_ /= MD_FACTOR;
+    }
+  }
+  for (auto const &s : to_remove) {
+    this->pending_.erase(s);
+  }
+
   unsigned int rounded = this->window_size_;
 
   if ( debug_ ) {
@@ -35,6 +51,8 @@ void Controller::datagram_was_sent( const uint64_t sequence_number,
 				    const uint64_t send_timestamp )
                                     /* in milliseconds */
 {
+  this->pending_[sequence_number] = send_timestamp;
+
   if ( debug_ ) {
     cerr << "At time " << send_timestamp
 	 << " sent datagram " << sequence_number << endl;
@@ -51,6 +69,9 @@ void Controller::ack_received( const uint64_t sequence_number_acked,
 			       const uint64_t timestamp_ack_received )
                                /* when the ack was received (by sender) */
 {
+  // remove from pending
+  this->pending_.erase(sequence_number_acked);
+
   // update rtt estimate
   auto rtt = timestamp_ack_received - send_timestamp_acked;
   if (this->rtt_estimate_ == 0) {
