@@ -16,6 +16,7 @@ private:
   uint64_t rtt_estimate_;
   double integral_error_;
   double previous_error_;
+  std::map<uint64_t, uint64_t> pending_; // map from sequence number to send timestamp
 
 public:
   /* Public interface for the congestion controller */
