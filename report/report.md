@@ -107,10 +107,13 @@ The best result was still achieved by the AIMD implementation centered around 10
 
 ## PID
 
-We implemented a PID controller to control window size. We also added some code
-to prevent "reset windup", which is a condition that results in a large
-accumulated negative error. This is an issue with the system because window
-size can't be "driven" to a negative value.
+We implemented a PID controller to control window size to keep EWMAed RTT close
+to a given target. This isn't optimizing for exactly the right thing (we wanted
+to have a low 95th percentile signal delay), but it's still reasonably good.
+
+We also added some code to prevent "reset windup", which is a condition that
+results in a large accumulated negative error. This is an issue with the system
+because window size can't be "driven" to a negative value.
 
 We didn't really know a particularly principled way of setting PID parameters,
 so we manually tuned parameters. To avoid "overfitting" the PID parameters, we
@@ -182,7 +185,15 @@ delay of 198 ms, and a score of 53.28.
 
 * http://www.controleng.com/single-article/fixing-pid/3975cad3f121d8df3fc0fd67660822b1.html
 
-## PID + AIMD
+## PIDish
+
+We found that when there were large changes in network capacity, the PID
+controller did not react quickly enough. In particular, when network capacity
+decreased rapidly, our controller didn't back off quickly enough. To account
+for this, we tried modifying PID so that we had two different K_D values, one
+for negative derivatives and one for positive derivatives.
+
+This didn't actually make much of a difference.
 
 # Exercise E
 

@@ -69,7 +69,8 @@ void Controller::ack_received( const uint64_t sequence_number_acked,
   double derivative_error = error - this->previous_error_;
   this->previous_error_ = error;
 
-  double output = K_P * error + K_I * this->integral_error_ + K_D * derivative_error;
+  double k_d = (derivative_error < 0) ? K_D_neg : K_D_pos;
+  double output = K_P * error + K_I * this->integral_error_ + k_d * derivative_error;
   if (output < 0 && error < 0) {
     this->integral_error_ -= error; // subtract it back out
     // prevent "reset windup"
