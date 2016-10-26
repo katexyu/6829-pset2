@@ -26,7 +26,7 @@ unsigned int Controller::window_size( void )
   for (auto const &p : this->pending_) {
     auto seq = p.first;
     auto ts = p.second;
-    if (this->rtt_estimate_ != 0 && now - ts > this->rtt_estimate_ * LATE_FACTOR) {
+    if (now - ts > TIMEOUT) {
       to_remove.insert(seq);
       this->window_size_ /= MD_FACTOR;
     }
@@ -120,4 +120,5 @@ void Controller::ack_received( const uint64_t sequence_number_acked,
    before sending one more datagram */
 unsigned int Controller::timeout_ms( void )
 {
-  return TIMEOUT;}
+  return 1000; /* timeout of one second */
+}
