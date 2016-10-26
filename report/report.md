@@ -197,7 +197,33 @@ This didn't actually make much of a difference.
 
 ## PD Controller
 
-We tried using a PD controller to control changes to the window size.
+We tried using a PD controller to control changes to the window size (rather
+than controlling the window size directly). We did a grid search for parameters
+over the following space:
+
+```python
+SPACE = {
+    'RTT_EWMA_FACTOR': ['0.2', '0.5', '1.0'],
+    'TARGET_DELAY': ['70.0', '90.0'],
+    'K_P': ['1e0', '5e-1', '1e-1', '5e-2', '1e-2', '5e-3', '1e-3'],
+    'K_I': ['0.0'],
+    'K_D': ['1e-1', '1e-2', '1e-3', '5e-4', '1e-4', '5e-5', '1e-5'],
+}
+```
+
+Here are the top results out of 294 trials, training on the TMobile dataset:
+
+| EWMA | Target | K_D  | K_P  | K_I  | Throughput | Delay | Score |
+| ---- | ------ | ---- | ---- | ---- | ---------- | ----- | ----- |
+| 0.2  | 90.0   | 1e-2 | 1e-2 | 0.0  | 13.29      | 231   | 57.53 |
+| 1.0  | 70.0   | 1e-3 | 5e-3 | 0.0  | 10.91      | 189   | 57.72 |
+| 0.2  | 70.0   | 1e-3 | 5e-3 | 0.0  | 10.93      | 189   | 57.83 |
+| 0.2  | 70.0   | 1e-2 | 5e-3 | 0.0  | 11.86      | 205   | 57.85 |
+| 0.5  | 70.0   | 1e-2 | 5e-3 | 0.0  | 11.82      | 203   | 58.22 |
+| 1.0  | 70.0   | 1e-2 | 5e-3 | 0.0  | 11.88      | 204   | 58.23 |
+
+Using the best parameters on the Verizon dataset, we get a throughput of 4.08
+Mbits/s, 95th percentile signal delay of 143 ms, and a score of 28.53.
 
 # Exercise E
 
