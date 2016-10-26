@@ -2,6 +2,7 @@
 
 import subprocess
 import os
+import sys
 
 SPACE = {
     'RTT_EWMA_FACTOR': ['0.2', '0.5', '1.0'],
@@ -32,7 +33,7 @@ def write_parameters(params):
         f.write(template % defines)
 
 def get_scores():
-    ret = subprocess.call(['make'])
+    ret = subprocess.call('make >/dev/null 2>&1', shell=True)
     assert ret == 0
     proc = subprocess.Popen(['./run-contest', 'dummy'], stderr=subprocess.PIPE)
     _, data = proc.communicate()
@@ -55,13 +56,16 @@ def main():
     for params in grid(SPACE):
         write_parameters(params)
         print('Running with parameters: %s' % params)
+        sys.stdout.flush()
         throughput, delay, score = get_scores()
         print('Result: throughput: %.2f, delay: %d, score: %.2f' % (throughput, delay, score))
+        sys.stdout.flush()
         scores.append((params, throughput, delay, score))
     print('\n\n')
     scores.sort(key=lambda i: i[3])
     print('params, throughput, delay, score')
     print('\n'.join(str(i) for i in scores))
+    sys.stdout.flush()
 
 if __name__ == '__main__':
     main()
