@@ -156,6 +156,11 @@ From 250 experiments, here are the bottom 5 and top 5 results:
 | 0.2  | 90.0   | 5e-3 | 1e-2 | 1e-2 | 13.16      | 231   | 56.96 |
 | 0.2  | 90.0   | 1e-2 | 1e-2 | 1e-2 | 13.24      | 231   | 57.31 |
 
+Here's a scatter plot of throughput versus delay for all 250 trials:
+
+![](pid-grid.png)\
+
+
 Taking the best parameters and running the simulation on the Verizon trace, we
 get a throughput of 4.33 Mbits/s and a 95th percentile signal delay of 186
 milliseconds for a score of 23.28.
@@ -222,8 +227,18 @@ Here are the top results out of 294 trials, training on the TMobile dataset:
 | 0.5  | 70.0   | 1e-2 | 5e-3 | 0.0  | 11.82      | 203   | 58.22 |
 | 1.0  | 70.0   | 1e-2 | 5e-3 | 0.0  | 11.88      | 204   | 58.23 |
 
+Here's a scatter plot of throughput versus delay for all 250 trials:
+
+![](pd-grid.png)\
+
+
 Using the best parameters on the Verizon dataset, we get a throughput of 4.08
 Mbits/s, 95th percentile signal delay of 143 ms, and a score of 28.53.
+
+If we compare the PID controller to the PD controller, we find the following:
+
+![](pid-vs-pd-grid.png)\
+
 
 ## PD Controller with Multiplicative Decrease
 
@@ -235,4 +250,6 @@ Part B.
 # Contributions
 
 We pair programmed exercises A, B, and C. We came up with the idea for the PID
-controller together. Anish wrote the grid search.
+controller together. Anish wrote the grid search and plotting code. We came up
+with the idea of the PD controller together and pair programmed it. Kate
+programmed the PD controller with multiplicative decrease.
