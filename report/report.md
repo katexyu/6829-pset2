@@ -105,7 +105,7 @@ The best result was still achieved by the AIMD implementation centered around 10
 
 # Exercise D
 
-## PID
+## PID Controller
 
 We implemented a PID controller to control window size to keep EWMAed RTT close
 to a given target. This isn't optimizing for exactly the right thing (we wanted
@@ -185,7 +185,7 @@ delay of 198 ms, and a score of 53.28.
 
 * http://www.controleng.com/single-article/fixing-pid/3975cad3f121d8df3fc0fd67660822b1.html
 
-## PIDish
+## PIDish Controller
 
 We found that when there were large changes in network capacity, the PID
 controller did not react quickly enough. In particular, when network capacity
@@ -194,6 +194,10 @@ for this, we tried modifying PID so that we had two different K_D values, one
 for negative derivatives and one for positive derivatives.
 
 This didn't actually make much of a difference.
+
+## PD Controller
+
+We tried using a PD controller to control changes to the window size.
 
 # Exercise E
 
