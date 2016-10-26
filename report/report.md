@@ -123,6 +123,8 @@ data from testing **on the TMobile dataset**:
 | 90          | 0.4  | 1e-1 | 1e-2 | 2e-3 | 14.29      | 268   | 53.32 |
 | 90          | 0.2  | 1e-1 | 2e-2 | 2e-3 | 12.66      | 302   | 41.92 |
 
+### Grid Search
+
 After this, we decided to do a grid search over a larger parameter space (see
 `gridsearch.py`):
 
@@ -160,9 +162,27 @@ EWMA = 0.4, Target = 90, K_I = 5e-3, K_D = 1e-2, and K_P = 1e-2 for a
 throughput of 4.58 Mbits/s, 95th percentile signal delay of 179 ms, and a score
 of 25.59.
 
+Next, we tried doing a search to find the best target delay, keeping EWMA =
+0.2, K_P = 1e-2, K_I = 1e-2, and K_D = 1e-2. Here are the results:
+
+| Target | Throughput | Delay | Score |
+| ------ | ---------- | ----- | ----- |
+| 110    | 4.46       | 226   | 19.73 |
+| 100    | 4.42       | 206   | 21.46 |
+| 90     | 4.33       | 186   | 23.28 |
+| 80     | 4.19       | 186   | 25.39 |
+| 60     | 3.22       | 122   | 26.39 |
+| 70     | 3.94       | 138   | 28.55 |
+
+We tried running this on the TMobile trace (as a sanity check to see if we were
+overfitting), and we got a throughput of 10.55 Mbits/s, 95th percentile signal
+delay of 198 ms, and a score of 53.28.
+
 ### References
 
 * http://www.controleng.com/single-article/fixing-pid/3975cad3f121d8df3fc0fd67660822b1.html
+
+## PID + AIMD
 
 # Exercise E
 
