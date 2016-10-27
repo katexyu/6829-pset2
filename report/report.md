@@ -243,7 +243,22 @@ If we compare the PID controller to the PD controller, we find the following:
 ## PD Controller with Multiplicative Decrease
 
 We tried augmenting our PD controller with our multiplicative decrease implementation from
-Part B.
+Part B. It didn't seem to help; the best performing runs were with higher timeouts (thus
+triggering the multiplicative decrease scenario very rarely.)
+
+From the excerpt of results shown below, we observe that throughput is low in cases where the
+timeout that triggers a multiplicative decrease occurs, and doesn't really result in significantly
+lower delay. We fixed RTT_EWMA_FACTOR to 0.2, K_P to 5e-3, and K_D to 1e-2.
+
+| Timeout | Target Delay | MD Factor | Throughput | Signal Delay (ms) | Score |
+| ------- | ------------ | --------- | ---------- | ------------------| ----- |
+| 100     | 70.0         | 1.5       | 4.08       | 155               | 26.32 |
+| 100     | 80.0         | 1.5       | 5.20       | 173               | 30.06 |
+| 200     | 70.0         | 1.5       | 9.95       | 192               | 51.82 |
+| 200     | 80.0         | 1.5       | 11.42      | 211               | 54.12 |
+| 400     | 80.0         | 1.5       | 13.38      | 235               | 56.94 |
+| 400     | 70.0         | 2.0       | 11.77      | 205               | 57.41 |
+| 400     | 70.0         | 1.5       | 11.8       | 203               | 58.12 |
 
 # Exercise E
 
