@@ -9,6 +9,7 @@ IMAGES := \
 	pid-grid.png \
 	pd-grid.png \
 	pid-vs-pd-grid.png \
+	pd-95th-percentile.png \
 
 report.pdf: report.md $(IMAGES)
 	pandoc --from=markdown --output=$@ $<

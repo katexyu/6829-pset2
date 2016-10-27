@@ -269,8 +269,6 @@ signal delay over a sliding window and reacted based on that. Initially, we
 used a simple AIMD-like scheme; later, we used a PD controller to control
 changes to window size.
 
-This is our current scheme.
-
 We did a small grid search over the following parameter space, training on the
 TMobile dataset:
 
@@ -294,8 +292,15 @@ Here are the top 5 results:
 | 80.0   | 30.0    | 7    | 0.9   | 5e-2 | 1e-3 | 9.73       | 159   | 61.19 |
 | 80.0   | 20.0    | 3    | 0.8   | 5e-2 | 1e-3 | 9.94       | 162   | 61.36 |
 | 80.0   | 20.0    | 7    | 0.9   | 5e-2 | 1e-3 | 10.66      | 173   | 61.62 |
-({'CONTROL_EPOCH': '20.0', 'K_P': '5e-2', 'HISTORY_DECAY': '0.9', 'K_D': '1e-3', 'HISTORY_SIZE': '7', 'TARGET_95_PERCENTILE': '80.0'}, 10.66, 173, 61.61849710982659)
 
+Here's a graph of the 16 data points:
+
+![](pd-95th-percentile.png)\
+
+
+We used the best parameters we found and ran the simulation on the Verizon
+dataset. We got a throughput of 3.88 Mbits/s, a 95th percentile signal delay of
+152 ms, and a score of 25.53.
 
 # Exercise E
 
