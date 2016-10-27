@@ -260,6 +260,43 @@ lower delay. We fixed RTT_EWMA_FACTOR to 0.2, K_P to 5e-3, and K_D to 1e-2.
 | 400     | 70.0         | 2.0       | 11.77      | 205               | 57.41 |
 | 400     | 70.0         | 1.5       | 11.8       | 203               | 58.12 |
 
+## PD Controller for 95th Percentile Delay
+
+As we noted earlier, our earlier PID and PD controllers were attempting to
+match a specific delay, but they weren't optimizing for a specific 95th
+percentile delay. We wrote another controller that estimated 95th percentile
+signal delay over a sliding window and reacted based on that. Initially, we
+used a simple AIMD-like scheme; later, we used a PD controller to control
+changes to window size.
+
+This is our current scheme.
+
+We did a small grid search over the following parameter space, training on the
+TMobile dataset:
+
+```python
+SPACE = {
+    'TARGET_95_PERCENTILE': ['80.0'],
+    'K_P': ['5e-2', '1e-2'],
+    'K_D': ['1e-3'],
+    'CONTROL_EPOCH': ['20.0', '30.0'],
+    'HISTORY_SIZE': ['3', '7'],
+    'HISTORY_DECAY': ['0.8', '0.9'],
+}
+```
+
+Here are the top 5 results:
+
+| Target | Control | Size | Decay | K_P  | K_D  | Throughput | Delay | Score |
+| ------ | ------- | ---- | ----- | ---- | ---- | ---------- | ----- | ----- |
+| 80.0   | 20.0    | 3    | 0.9   | 5e-2 | 1e-3 | 10.36      | 190   | 54.53 |
+| 80.0   | 20.0    | 7    | 0.8   | 5e-2 | 1e-3 | 11.49      | 207   | 55.51 |
+| 80.0   | 30.0    | 7    | 0.9   | 5e-2 | 1e-3 | 9.73       | 159   | 61.19 |
+| 80.0   | 20.0    | 3    | 0.8   | 5e-2 | 1e-3 | 9.94       | 162   | 61.36 |
+| 80.0   | 20.0    | 7    | 0.9   | 5e-2 | 1e-3 | 10.66      | 173   | 61.62 |
+({'CONTROL_EPOCH': '20.0', 'K_P': '5e-2', 'HISTORY_DECAY': '0.9', 'K_D': '1e-3', 'HISTORY_SIZE': '7', 'TARGET_95_PERCENTILE': '80.0'}, 10.66, 173, 61.61849710982659)
+
+
 # Exercise E
 
 # Contributions
@@ -267,4 +304,6 @@ lower delay. We fixed RTT_EWMA_FACTOR to 0.2, K_P to 5e-3, and K_D to 1e-2.
 We pair programmed exercises A, B, and C. We came up with the idea for the PID
 controller together. Anish wrote the grid search and plotting code. We came up
 with the idea of the PD controller together and pair programmed it. Kate
-programmed the PD controller with multiplicative decrease.
+programmed the PD controller with multiplicative decrease. We came up with the
+idea of the PD controller for a specific 95th percentile delay together and
+pair programmed it.
