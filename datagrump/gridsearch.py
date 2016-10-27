@@ -5,13 +5,12 @@ import os
 import sys
 
 SPACE = {
-    'RTT_EWMA_FACTOR': ['0.2'],
-    'TARGET_DELAY': ['60.0', '70.0', '80.0'],
-    'K_P': ['1e-2', '1e-3'],
-    'K_I': ['0.0'],
-    'K_D': ['1e-2', '1e-3'],
-    'MD_FACTOR': ['1.0', '2.0', '3.0'],
-    'TIMEOUT': ['100', '200', '500']
+    'TARGET_95_PERCENTILE': ['80.0'],
+    'K_P': ['5e-2', '1e-2'],
+    'K_D': ['1e-3'],
+    'CONTROL_EPOCH': ['20.0', '30.0'],
+    'HISTORY_SIZE': ['3', '7'],
+    'HISTORY_DECAY': ['0.8', '0.9'],
 }
 
 def grid(space):

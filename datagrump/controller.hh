@@ -3,6 +3,7 @@
 
 #include <cstdint>
 #include <map>
+#include <vector>
 
 /* Congestion controller interface */
 
@@ -13,10 +14,10 @@ private:
 
   /* Add member variables here */
   double window_size_;
-  uint64_t rtt_estimate_;
-  double integral_error_;
+  std::vector<std::vector<uint64_t>> rtts_;
+  uint64_t epoch_start_;
+  void maybe_advance_epoch();
   double previous_error_;
-  std::map<uint64_t, uint64_t> pending_; // map from sequence number to send timestamp
 
 public:
   /* Public interface for the congestion controller */
