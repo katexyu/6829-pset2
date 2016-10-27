@@ -302,7 +302,11 @@ We used the best parameters we found and ran the simulation on the Verizon
 dataset. We got a throughput of 3.88 Mbits/s, a 95th percentile signal delay of
 152 ms, and a score of 25.53.
 
-# Exercise E
+If we manually tweak the parameters for the Verizon dataset, we found that the
+best we could get was with the parameters TARGET_95_PERCENTILE = 70, K_P =
+5e-2, K_D = 1e-3, CONTROL_EPOCH = 20.0, HISTORY_SIZE = 3, HISTORY_DECAY = 0.8.
+With these parameters, we got a throughput of 3.60 Mbits/s, a delay of 128 ms,
+and a score of 28.13.
 
 # Contributions
 
