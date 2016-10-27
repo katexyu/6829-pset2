@@ -36,10 +36,10 @@ push @command, q{./sender $MAHIMAHI_BASE 9090};
 # for the contest, we will send data over Verizon's downlink
 # (datagrump sender's uplink)
 die unless $command[ 3 ] eq "UPLINK";
-$command[ 3 ] = qq{$tracedir/TMobile-LTE-short.down};
+$command[ 3 ] = qq{$tracedir/Verizon-LTE-short.down};
 
 die unless $command[ 4 ] eq "DOWNLINK";
-$command[ 4 ] = qq{$tracedir/TMobile-LTE-short.up};
+$command[ 4 ] = qq{$tracedir/Verizon-LTE-short.up};
 
 system @command;
 
@@ -53,8 +53,6 @@ system q{mm-throughput-graph 500 /tmp/contest_uplink_log > /dev/null}
   and die q{mm-throughput-graph exited with error. NOT uploading};
 
 print "\n";
-
-exit 0;
 
 # gzip logfile
 print q{Uploading data to server...};
